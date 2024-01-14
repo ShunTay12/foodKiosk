@@ -202,7 +202,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-1 mt-n2" style="padding-left: 6px; padding-right: 12px;">
-                                                <img src="../images/QR.png" style="width: 35px;" alt="">
+                                                <img src="../images/qr/qr_<?php echo $foodName; ?>.png" style="width: 35px;" alt="">
                                             </div>
                                         </div>                                           
                                     </div>                                    
