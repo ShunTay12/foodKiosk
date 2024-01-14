@@ -77,7 +77,36 @@
 
     <?php
         if(isset($_SESSION['add'])) {
-            echo $_SESSION['add'];
+            $foodName = $_SESSION['add'];
+    ?>           
+
+    <!-- Added Modal -->
+    <div class="modal fade" id="notifyAddedSuccess" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-primary" id="notifyAddedSuccess">Menu Added!</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Your Menu was Added Successfully. Press OK to continue.
+                </div>
+                <div class="modal-footer">
+                <form id="menuForm">
+                    <input type="hidden" class="form-control form-control-sm" name="foodName" id="foodName" value="<?php echo $foodName; ?>">
+                    <button type="submit" name="submit" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <?php
+            echo    "<script>
+                        $(document).ready(function(){
+                            $('#notifyAddedSuccess').modal('show');
+                        });     
+                    </script>";
             unset($_SESSION['add']);
         } 
 
@@ -97,10 +126,40 @@
         }
 
         if(isset($_SESSION['update'])) {
-            echo $_SESSION['update'];
+            $foodName = $_SESSION['update'];
+    ?>
+
+    <!-- Updated Modal -->
+    <div class="modal fade" id="notifyUpdatedSuccess" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-success" id="notifyUpdatedSuccess">Menu Updated!</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Your Menu was Updated Successfully. Press OK to continue.
+                </div>
+                <div class="modal-footer">
+                <form id="menuForm">
+                    <input type="hidden" class="form-control form-control-sm" name="foodName" id="foodName" value="<?php echo $foodName; ?>">
+                    <button type="submit" name="submit" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <?php
+            echo    "<script>
+                        $(document).ready(function(){
+                            $('#notifyUpdatedSuccess').modal('show');
+                        });     
+                    </script>";
             unset($_SESSION['update']);
         }
     ?>
+
 
 
     <div class="container my-4 search-bar">
@@ -226,22 +285,20 @@
                                   
                                 </div>
                                 <div class="col-md-8">                                   
-                                        <div class="col-10">
-                                            <div class="row">
-                                                <div class="col-6"></div>
-                                                <div class="col-3 offset-2 btn-group">
-                                                        <a href="<?php echo SITEURL;?>foodAdmin/adminUpdateMenu.php?food_id=<?php echo $foodId; ?>" class="btn search-btn rounded transition" style="--bs-btn-padding-y: .2rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .9rem;">
-                                                            Edit
-                                                        </a>
-
-                                                          
-                                                        <a href="<?php echo SITEURL;?>foodAdmin/adminDeleteFood.php?food_id=<?php echo $foodId; ?>&food_image=<?php echo $foodImg; ?>&kiosk_id=<?php echo $kioskId; ?>" class="btn border-0 rounded mx-2 transition" style="--bs-btn-padding-y: .2rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .9rem;">
-                                                            <i class="fa-solid fa-trash-can"></i>
-                                                        </a>
-                                                </div>
+                                    <div class="col-10">
+                                        <div class="row">
+                                            <div class="col-6"></div>
+                                            <div class="col-3 offset-2 btn-group">
+                                                    <a href="<?php echo SITEURL;?>foodAdmin/adminUpdateMenu.php?food_id=<?php echo $foodId; ?>" class="btn search-btn rounded transition" style="--bs-btn-padding-y: .2rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .9rem;">
+                                                        Edit
+                                                    </a>
+                                                      
+                                                    <a href="<?php echo SITEURL;?>foodAdmin/adminDeleteFood.php?food_id=<?php echo $foodId; ?>&food_name=<?php echo $foodName; ?>&food_image=<?php echo $foodImg; ?>&kiosk_id=<?php echo $kioskId; ?>" class="btn border-0 rounded mx-2 transition" style="--bs-btn-padding-y: .2rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .9rem;">
+                                                        <i class="fa-solid fa-trash-can"></i>
+                                                    </a>
                                             </div>
                                         </div>
-                                    
+                                    </div>                                 
                                 </div>
                             </div>
                        </div>                
@@ -270,10 +327,28 @@
         </div>
     </div>
     
-    
-    
-
-
+    <!-- Generate qr code & download to local -->
+    <script src="../node_modules/qrcode.min.js"></script>
+    <script>
+        $( "#menuForm" ).on( "submit", function( e ) {
+            e.preventDefault();
+            const url = document.querySelector("#foodName").value;
+            let qrDiv = document.createElement('div');
+            let qrcode = new QRCode(qrDiv, {
+              text: url
+            });
+        
+            downloadQR(url, qrDiv);
+            location.reload();
+        });
+      
+        function downloadQR(qrValue, qrDiv) {
+            var link = document.createElement('a');
+            link.download = 'qr_' + qrValue + '.png';
+            link.href = qrDiv.children[0].toDataURL();
+            link.click();
+        }
+    </script>
 
     <?php include('../partials/footer.php'); ?>
 

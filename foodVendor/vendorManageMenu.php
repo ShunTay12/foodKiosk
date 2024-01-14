@@ -34,14 +34,7 @@
                     $kioskDescription = $row2['kiosk_description'];
     ?>
 
-    <div class="container-fluid">
-        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a class="no-underline text-reset link-primary" href="#">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Kiosk1</li>
-            </ol>
-        </nav>
-    </div>
+
 
     <div class="container-fluid shadow p-3">
         <div class="row">
@@ -63,8 +56,18 @@
             <div class="col-2">
                 <label for="">Opening Hours</label>
             </div>
-            <div class="col-10">
+            <div class="col-8">
                 Today <?php echo $kioskOpenHour; ?>:00-<?php echo $kioskCloseHour; ?>:00
+            </div>
+            <div class="col-2">
+                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+                    <div class="d-inline-block me-1">Close</div>
+                    <div class="form-check form-switch d-inline-block">
+                        <label class="form-check-label" for="kioskStatus">Open</label>
+                        <input <?php if($kioskStatus=="Open") {echo "checked";} ?> class="form-check-input" type="checkbox" role="switch" id="kioskStatus">
+                        <input type="hidden" name="kioskId" id="kioskId" value="<?php echo $kioskId; ?>">                   
+                    </div>
+                </form>         
             </div>
         </div>
     </div>
@@ -72,11 +75,56 @@
     <?php            
                     }
                 }
+        
+        // POST from js & Update kioskStatus in database 
+        if(isset($_POST['kioskStatus'])) {
+            $kioskStatus = $_POST['kioskStatus'] == "Open" ? "Open" : "Close";
+            $kioskId = $_POST['kioskId'];
+        
+            $sql = "UPDATE kiosk SET kiosk_status = '$kioskStatus' WHERE kiosk_id = $kioskId";
+            $run = mysqli_query($conn, $sql);
+        }
+                
+
     ?>
+
 
     <?php
         if(isset($_SESSION['add'])) {
-            echo $_SESSION['add'];
+            $foodName = $_SESSION['add'];
+    ?>           
+    
+    <!-- Added Modal -->
+    <div class="modal fade" id="notifyAddedSuccess" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-primary" id="notifyAddedSuccess">Menu Added!</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Your Menu was Added Successfully. Press OK to continue.
+                </div>
+                <div class="modal-footer">
+                <form id="menuForm">
+                    <input type="hidden" class="form-control form-control-sm" name="foodName" id="foodName" value="<?php echo $foodName; ?>">
+                    <button type="submit" name="submit" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+
+    
+    
+
+    <?php
+            echo    "<script>
+                        $(document).ready(function(){
+                            $('#notifyAddedSuccess').modal('show');
+                        });     
+                    </script>";
             unset($_SESSION['add']);
         } 
 
@@ -96,13 +144,42 @@
         }
 
         if(isset($_SESSION['update'])) {
-            echo $_SESSION['update'];
+            $foodName = $_SESSION['update'];
+    ?>
+
+    <!-- Updated Modal -->
+    <div class="modal fade" id="notifyUpdatedSuccess" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-success" id="notifyUpdatedSuccess">Menu Updated!</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Your Menu was Updated Successfully. Press OK to continue.
+                </div>
+                <div class="modal-footer">
+                <form id="menuForm">
+                    <input type="hidden" class="form-control form-control-sm" name="foodName" id="foodName" value="<?php echo $foodName; ?>">
+                    <button type="submit" name="submit" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <?php
+            echo    "<script>
+                        $(document).ready(function(){
+                            $('#notifyUpdatedSuccess').modal('show');
+                        });     
+                    </script>";
             unset($_SESSION['update']);
         }
     ?>
 
 
-<div class="container my-4 search-bar">
+    <div class="container my-4 search-bar">
         <div class="row">
             <div class="col-8">
                 <form class="d-flex" action="<?php echo SITEURL; ?>foodVendor/vendorFoodSearch.php" method="POST" role="search">
@@ -208,8 +285,8 @@
                                                 </div>
                                             </div>
                                             <div class="col-1 mt-n2" style="padding-left: 6px; padding-right: 12px;">
-                                                <img src="../images/QR.png" style="width: 35px;" alt="">
-                                            </div>
+                                                <img src="../images/qr/qr_<?php echo $foodName; ?>.png" style="width: 35px;" alt="">
+                                            </div>                                           
                                         </div>                                           
                                     </div>                                    
                                 </div>
@@ -218,27 +295,24 @@
                                 <div class="col-md-4">
                                     <div class="col">
                                         <p class="card-text text-body-tertiary p-0 m-0"><?php echo $foodAvailability . ": "; echo $foodQuantity; ?></p>
-                                    
                                     </div>
                                   
                                 </div>
                                 <div class="col-md-8">                                   
-                                        <div class="col-10">
-                                            <div class="row">
-                                                <div class="col-6"></div>
-                                                <div class="col-3 offset-2 btn-group">
-                                                        <a href="<?php echo SITEURL;?>foodVendor/vendorUpdateMenu.php?food_id=<?php echo $foodId; ?>" class="btn search-btn rounded transition" style="--bs-btn-padding-y: .2rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .9rem;">
-                                                            Edit
-                                                        </a>
-
-                                                          
-                                                        <a href="<?php echo SITEURL;?>foodVendor/vendorDeleteFood.php?food_id=<?php echo $foodId; ?>&food_image=<?php echo $foodImg; ?>&kiosk_id=<?php echo $kioskId; ?>" class="btn border-0 rounded mx-2 transition" style="--bs-btn-padding-y: .2rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .9rem;">
-                                                            <i class="fa-solid fa-trash-can"></i>
-                                                        </a>
-                                                </div>
+                                    <div class="col-10">
+                                        <div class="row">
+                                            <div class="col-6"></div>
+                                            <div class="col-3 offset-2 btn-group">
+                                                    <a href="<?php echo SITEURL;?>foodVendor/vendorUpdateMenu.php?food_id=<?php echo $foodId; ?>" class="btn search-btn rounded transition" style="--bs-btn-padding-y: .2rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .9rem;">
+                                                        Edit
+                                                    </a>
+                                                      
+                                                    <a href="<?php echo SITEURL;?>foodVendor/vendorDeleteFood.php?food_id=<?php echo $foodId; ?>&food_name=<?php echo $foodName; ?>&food_image=<?php echo $foodImg; ?>&kiosk_id=<?php echo $kioskId; ?>" class="btn border-0 rounded mx-2 transition" style="--bs-btn-padding-y: .2rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .9rem;">
+                                                        <i class="fa-solid fa-trash-can"></i>
+                                                    </a>
                                             </div>
                                         </div>
-                                    
+                                    </div>                                  
                                 </div>
                             </div>
                        </div>                
@@ -266,11 +340,42 @@
             
         </div>
     </div>
-    
-    
-    
 
-
+    <!-- Checkbox to open/close kiosk to POST data to php-->
+    <script>
+        $("#kioskStatus").on( "change", function() {
+            var kioskStatus = $(this).prop("checked") ? "Open" : "Close";
+            var kioskId = $("#kioskId").val();
+            $.ajax({
+                type: "POST",
+                url: "vendorManageMenu.php",
+                data: {kioskStatus: kioskStatus, kioskId: kioskId}
+            });
+        });
+    </script>
+    
+    <!-- Generate qr code & download to local -->
+    <script src="../node_modules/qrcode.min.js"></script>
+    <script>
+        $( "#menuForm" ).on( "submit", function( e ) {
+            e.preventDefault();
+            const url = document.querySelector("#foodName").value;
+            let qrDiv = document.createElement('div');
+            let qrcode = new QRCode(qrDiv, {
+              text: url
+            });
+        
+            downloadQR(url, qrDiv);
+            location.reload();
+        });
+      
+        function downloadQR(qrValue, qrDiv) {
+            var link = document.createElement('a');
+            link.download = 'qr_' + qrValue + '.png';
+            link.href = qrDiv.children[0].toDataURL();
+            link.click();
+        }
+    </script>
 
     <?php include('../partials/footer.php'); ?>
 

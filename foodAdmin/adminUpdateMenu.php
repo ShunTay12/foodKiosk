@@ -79,7 +79,7 @@
                                     <option <?php if($foodCategory=="mee") {echo "selected";} ?> value="mee">Mee</option>
                                     <option <?php if($foodCategory=="bread") {echo "selected";} ?> value="bread">Bread</option>
                                     <option <?php if($foodCategory=="porridge") {echo "selected";} ?> value="porridge">Porridge</option>
-                                    <option <?php if($foodCategory=="sides") {echo "selected";} ?> value="sideDish">Sides</option>
+                                    <option <?php if($foodCategory=="sides") {echo "selected";} ?> value="sides">Sides</option>
                                     <option <?php if($foodCategory=="soup") {echo "selected";} ?> value="soup">Soup</option>
                                     <option <?php if($foodCategory=="drink") {echo "selected";} ?> value="drink">Drink</option>
                                 </select>
@@ -112,9 +112,9 @@
                             </div>
                         </div>
 
-                        <input type="text" name="foodId" id="foodId" value="<?php echo $foodId; ?>">
-                        <input type="text" name="kioskId" id="kioskId" value="<?php echo $kioskId; ?>">
-                        <input type="text" name="currentImg" id="currentImg" value="<?php echo $foodCurrentImg; ?>">
+                        <input type="hidden" name="foodId" id="foodId" value="<?php echo $foodId; ?>">
+                        <input type="hidden" name="kioskId" id="kioskId" value="<?php echo $kioskId; ?>">
+                        <input type="hidden" name="currentImg" id="currentImg" value="<?php echo $foodCurrentImg; ?>">
 
                         <div class="row">
                             <div class="col-3 offset-9 btn-group">
@@ -127,81 +127,71 @@
     <?php
         }
     ?>
+
                     <?php
                         if(isset($_POST['submit'])) {
                             $foodId = $_POST['foodId'];
                             $kioskId = $_POST['kioskId'];
                             $foodName = $_POST['foodName'];
+                            $currentImg = $_POST['currentImg'];
                             $foodPrice = $_POST['foodPrice'];
                             $foodCategory = $_POST['foodCategory'];
                             $foodDescription = $_POST['foodDescription'];
                             $foodAvailability = $_POST['foodAvailability'];
                             $foodQuantity = $_POST['foodQuantity'];
-                            $currentImg = $_POST['currentImg'];
-
+                            // Define $foodImg here
+                            $foodImg = $currentImg;
+                        
                             if(isset($_FILES['foodImg']['name'])) {
                                 $foodImg = $_FILES['foodImg']['name'];
-
+                            
                                 if($foodImg != "") {
-                                    $image_info = explode (".", $foodImg);
-                                    $ext = end ($image_info);
+                                    $image_info = explode(".", $foodImg);
+                                    $ext = end($image_info);
                                     $foodImg = "Food_Name_" . rand(0000, 9999) . "." . $ext;
-
-                                    $src_path = $_FILES['foodImg']['tmp_name'];
-                                    $dest_path = "../images/menu/" . $foodImg;
-                                    $upload = move_uploaded_file($src_path, $dest_path);
-
+                                
+                                    $src = $_FILES['foodImg']['tmp_name'];
+                                    $dst = "../images/menu/" . $foodImg;
+                                    $upload = move_uploaded_file($src, $dst);
+                                
                                     if($upload == false) {
-                                        $_SESSION['upload'] = "<div class='error'>Failed to Upload new Image.</div>";
-                                        echo '<script>window.location = "'. SITEURL . 'foodAdmin/adminManageMenu.php?kiosk_id=' . $kioskId . '";</script>';
+                                        $_SESSION['upload'] = "<div class='error'>Failed to Upload Image.</div>";
+                                        echo '<script>window.location = "'. SITEURL . 'foodAdmin/adminAddNewMenu.php?kiosk_id=' . $kioskId . '";</script>';
                                         die();
                                     }
-
+                                
                                     if($currentImg != "") {
-                                        $path = "../images/menu/" . $currentImg;
-                                        $remove = unlink($path);
-                                      
-                                        if($remove == false) {
-                                            $_SESSION['remove-failed'] = "<div class='error'>Failed to Remove current Image.</div>";
-                                            echo '<script>window.location = "'. SITEURL . 'foodAdmin/adminManageMenu.php?kiosk_id=' . $kioskId . '";</script>';
+                                        $imgPath = "../images/menu/" . $currentImg;                                      
+                                        $removeImg = unlink($imgPath);
+
+                                        if($removeImg == false) {
+                                            $_SESSION['upload'] = "<div>Failed to remove Food Image</div>";
+                                            echo '<script>window.location = "'. SITEURL . 'foodAdmin/adminAddNewMenu.php?kiosk_id=' . $kioskId . '";</script>';
                                             die();
                                         }
                                     }
                                 }
+                                else {
+                                    $foodImg = $currentImg;
+                                }
                             }
-                            else {
-                                $foodImg = $currentImg;
-                            }
-                            
-
-                            $sql2 = "UPDATE food SET 
-                                food_id = '$foodId',
-                                kiosk_id = '$kioskId',
-                                food_image = '$foodImg',
-                                food_name = '$foodName',
-                                food_description = '$foodDescription',
-                                food_price = $foodPrice,
-                                food_remainingQuantity = '$foodQuantity',
-                                food_category = '$foodCategory',
-                                food_availability = '$foodAvailability' 
-                                WHERE food_id= $foodId";
-
+                        
+                            $qrPath = "../images/qr/qr_" . $foodName . ".png";
+                            $removeQr = unlink($qrPath);
+                        
+                            $sql2 = "UPDATE food SET kiosk_id = $kioskId, food_name = '$foodName', food_image = '$foodImg', food_description = '$foodDescription', food_price = $foodPrice, food_remainingQuantity = $foodQuantity, food_category = '$foodCategory', food_availability = '$foodAvailability' WHERE food_id = $foodId";
                             $run2 = mysqli_query($conn, $sql2);
-
+                        
                             if($run2 == true) {
-                                $_SESSION['update'] = "<div class='success'>Food Updated Successfully.</div>";
+                                $_SESSION['update'] = $foodName;
                                 echo '<script>window.location = "'. SITEURL . 'foodAdmin/adminManageMenu.php?kiosk_id=' . $kioskId . '";</script>';
                             }
                             else {
                                 $_SESSION['update'] = "<div class='error'>Failed to Update Food..</div>";
                                 echo '<script>window.location = "'. SITEURL . 'foodAdmin/adminManageMenu.php?kiosk_id=' . $kioskId . '";</script>';
                             }
-
-
                         }
-                    ?>
-                    
-                    
+                    ?>  
                 </div>
             </div>
         </div>

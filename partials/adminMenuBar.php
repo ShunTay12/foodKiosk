@@ -6,6 +6,7 @@
 
 <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="../node_modules/popper.min.js"></script>
+<script src="../node_modules/jquery-3.7.1.min.js"></script>
 <script src="../node_modules/script.js"></script>
 
 

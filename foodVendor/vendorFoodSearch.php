@@ -10,14 +10,7 @@
 <body>
     <?php include('../partials/vendorMenuBar.php'); ?>
 
-    <div class="container-fluid">
-        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a class="no-underline text-reset link-primary" href="index.html">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Kiosk1</li>
-            </ol>
-        </nav>
-    </div>
+    
 
     <div class="container-fluid shadow p-3">
         <div class="row">

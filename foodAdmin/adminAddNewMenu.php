@@ -159,13 +159,10 @@
                             $run = mysqli_query($conn, $sql);
 
                             if($run == true) {
-                                $_SESSION['add'] = "<div class='success'>Menu Added Successfully.</div>";
+                                $_SESSION['add'] = $foodName;
                                 echo '<script>window.location = "'. SITEURL . 'foodAdmin/adminManageMenu.php?kiosk_id=' . $kioskId . '";</script>';
                             }
-                            else {
-                                $_SESSION['add'] = "<div class='error'>Failed to Add Menu.</div>";
-                                echo '<script>window.location = "'. SITEURL . 'foodAdmin/adminManageMenu.php?kiosk_id=' . $kioskId . '";</script>';
-                            }
+                            
                         }
                     ?>
                     

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vendor Add New Menu</title>
 
-    
+
 </head>
 <body>
     <?php include('../partials/vendorMenuBar.php'); ?>
@@ -29,7 +29,7 @@
                         } 
                     ?>
 
-                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
+                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data" id="menuForm">
                         <legend class="mb-3 fw-bold fs-3">ADD NEW MENU</legend>
                         <div class="row mb-3">
                             <label for="foodImg" class="col-sm-2 col-form-label col-form-label-sm fs-6">Food Image</label>
@@ -96,7 +96,7 @@
                         <div class="row">
                             <div class="col-3 offset-9 btn-group">
                                 <input type="hidden" name="kioskId" value="<?php echo $kioskId; ?>">
-                                <a href="<?php echo SITEURL; ?>foodVendor/vendorManageMenu.php?kiosk_id=<?php echo $kioskId; ?>" class="btn btn-light rounded transition border border-dark mx-2" type="submit" style="--bs-btn-padding-y: .2rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .9rem;">Cancel</a>
+                                <a href="<?php echo SITEURL; ?>foodVendor/vendorManageMenu.php?kiosk_id=<?php echo $kioskId; ?>" class="btn btn-light rounded transition border border-dark mx-2" style="--bs-btn-padding-y: .2rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .9rem;">Cancel</a>
                                 <button class="btn btn-primary rounded transition" type="submit" name="submit" style="--bs-btn-padding-y: .2rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .9rem;">Add</button>
                             </div>
                         </div>
@@ -159,13 +159,10 @@
                             $run = mysqli_query($conn, $sql);
 
                             if($run == true) {
-                                $_SESSION['add'] = "<div class='success'>Menu Added Successfully.</div>";
+                                $_SESSION['add'] = $foodName;
                                 echo '<script>window.location = "'. SITEURL . 'foodVendor/vendorManageMenu.php?kiosk_id=' . $kioskId . '";</script>';
                             }
-                            else {
-                                $_SESSION['add'] = "<div class='error'>Failed to Add Menu.</div>";
-                                echo '<script>window.location = "'. SITEURL . 'foodVendor/vendorManageMenu.php?kiosk_id=' . $kioskId . '";</script>';
-                            }
+                            
                         }
                     ?>
                     
@@ -174,7 +171,9 @@
         </div>
     </div>
 
-                        
+   
+
+
 
 
 

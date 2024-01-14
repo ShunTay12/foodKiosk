@@ -6,6 +6,7 @@
 
 <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="../node_modules/popper.min.js"></script>
+<script src="../node_modules/jquery-3.7.1.min.js"></script>
 <script src="../node_modules/script.js"></script>
 
 
@@ -21,13 +22,13 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item mx-3">
-                        <a class="nav-link active" aria-current="page" href="<?php echo SITEURL; ?>foodVendor/vendorManageMenu.php?kiosk_id=<?php echo $kioskId; ?>">Home</a>
+                        <a class="nav-link active" aria-current="page" href="vendorManageMenu.php">Home</a>
                     </li>
                     <li class="nav-item mx-3">
-                        <a class="nav-link" href="#">Order Status</a>
+                        <a class="nav-link" href="vendorOrderList.php">Order List</a>
                     </li>
                     <li class="nav-item mx-3">
-                        <a class="nav-link" href="#">Dashboard</a>
+                        <a class="nav-link" href="vendorDashboard.php">Dashboard</a>
                     </li>
                     <li class="nav-item ms-3 me-5">
                         <a class="nav-link" href="#">Profile</a>
